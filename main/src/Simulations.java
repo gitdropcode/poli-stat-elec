@@ -13,10 +13,11 @@ public class Simulations {
 		
 	}
 	
-	public static double write(District[] districts, int iterations) throws IOException {
+	public static double[] write(District[] districts, int iterations) throws IOException {
 		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter("districtMarg.csv")));
 		PrintWriter out2 = new PrintWriter(new BufferedWriter(new FileWriter("histogram.csv")));
 		// output: margin with stdv, probability of winning, histogram
+		out1.println("year,month,day,name,dem_percent,st_dv,probability");
 		
 		double[] racePerc = new double[districts.length];
 		double[] raceStdv = new double[districts.length];
@@ -41,27 +42,17 @@ public class Simulations {
 		
 		double totalDemProb = 0;
 		for (int i = 0; i < histo.length; i++) {
-			if (i >= 218) totalDemProb += histo[i];
+			if (i >= 218) {
+				totalDemProb += histo[i];
+			}
 		}
+
 		out2.println(totalDemProb/iterations);
 			
 		
 		out1.close();
 		out2.close();
-		return totalDemProb/iterations;
-	}
-	
-	
-	// unnecessary
-	public static double[] simulate(District[] districts) {
-		double[] racePerc = new double[districts.length];
-		double[] raceStdv = new double[districts.length];
-		for (int i = 0; i < districts.length; i++) {
-			racePerc[i] = districts[i].getFinalDemPercent();
-			raceStdv[i] = districts[i].getFinalStDv();
-		}
-		double[] probs = percToProb(racePerc, raceStdv, 1000);
-		return probSimulate(probs, 10000);
+		return histo;
 	}
 	
 	public static double[] percToProb(double[] racePerc, double[] raceStdv, int iter) {

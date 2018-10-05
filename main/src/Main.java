@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -24,18 +25,29 @@ public class Main {
 //            System.out.println(district);
 //        }
 
-        double averageDemWinPercent = 0;
+        double[] results = new double[436];
         Random generator = new Random();
         for (int i = 0; i < 1000; i++) {
-            double nationalShift = natlShiftCalc.calcNationalShift(districts, (0.493/(0.493+0.413) + generator.nextGaussian()*0.0253));
+            double nationalShift = natlShiftCalc.calcNationalShift(districts, (0.493/(0.493+0.413) + generator.nextGaussian()*0.0357));
+//            System.out.println("Shift: "+nationalShift);
             NationalCorrectionCalculator natlCorrectCalc = new NationalShift(nationalShift);
             natlCorrectCalc.calcAll(districts);
             PollAverager pollAverager = new ExponentialPollAverager(1. / 30.);
             PollCalculator pollCalculator = new ArctanPollCalculator(pollAverager, gradeQualityPoints, 1. / 167.,
                     0.9, 0, 16.6, 0.0, 0.05);
             pollCalculator.calcAll(districts);
-            averageDemWinPercent += Simulations.write(districts, 1000);
+            double[] result = Simulations.write(districts, 1000);
+            for (int j = 0; j < 436; j++){
+                results[j] += result[j];
+            }
         }
-        System.out.println(averageDemWinPercent/1000);
+        System.out.println(Arrays.toString(results));
+        double totalDemProb = 0;
+        for (int i = 0; i < results.length; i++) {
+            if (i >= 218) {
+                totalDemProb += results[i];
+            }
+        }
+        System.out.println("Total win %: "+totalDemProb/Math.pow(1000., 2));
     }
 }
