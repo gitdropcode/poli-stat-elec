@@ -22,15 +22,15 @@ public class Main {
                 "bantor_input.csv");
         fundamentalCalculator.calcAll(districts);
 //        for (District district : districts){
-//            System.out.println(district);
+//            System.out.println(district.getFundamentalDemPercent());
 //        }
 
         double[] results = new double[436];
         Random generator = new Random();
         for (int i = 0; i < 1000; i++) {
-            double nationalShift = natlShiftCalc.calcNationalShift(districts, (0.493/(0.493+0.413) + generator.nextGaussian()*0.0357));
+//            double nationalShift = natlShiftCalc.calcNationalShift(districts, (0.493/(0.493+0.413) + generator.nextGaussian()*0.0));
 //            System.out.println("Shift: "+nationalShift);
-            NationalCorrectionCalculator natlCorrectCalc = new NationalShift(nationalShift);
+            NationalCorrectionCalculator natlCorrectCalc = new NationalShift(0.05 + generator.nextGaussian()*0.01);
             natlCorrectCalc.calcAll(districts);
             PollAverager pollAverager = new ExponentialPollAverager(1. / 30.);
             PollCalculator pollCalculator = new ArctanPollCalculator(pollAverager, gradeQualityPoints, 1. / 167.,
@@ -41,13 +41,15 @@ public class Main {
                 results[j] += result[j];
             }
         }
-        System.out.println(Arrays.toString(results));
+//        System.out.println(Arrays.toString(results));
         double totalDemProb = 0;
         for (int i = 0; i < results.length; i++) {
+            System.out.println(i + ": "+results[i]);
             if (i >= 218) {
                 totalDemProb += results[i];
             }
         }
-        System.out.println("Total win %: "+totalDemProb/Math.pow(1000., 2));
+        System.out.println(Arrays.toString(results));
+        System.out.println("Total win %: "+totalDemProb/Math.pow(100., 2));
     }
 }
